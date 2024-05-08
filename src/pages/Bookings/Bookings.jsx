@@ -8,90 +8,74 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 const Bookings = () => {
   const { user } = useContextData();
   const [bookings, setBookings] = useState([]);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const axiosSecure = useAxiosSecure();
 
   // const url = `http://localhost:5000/bookings?email=${user?.email}`;
   const url = `/bookings?email=${user?.email}`;
 
-  useEffect(()=>{
-
-       const getData = async () =>{
-        try {
-            setLoading(true);
-          const { data } = await axiosSecure.get(url);
-          setBookings(data);
-          setLoading(false)
-        } catch (error) {
-          toast.error(error.message);
-        }
-       }
-       getData()
-  },[url,axiosSecure])
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axiosSecure.get(url);
+        setBookings(data);
+        setLoading(false);
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+    getData();
+  }, [url, axiosSecure]);
 
   console.log(bookings);
 
   if (loading) {
-    return <h1 className="mt-20 text-center text-5xl font-bold">Loading...............</h1>
+    return (
+      <h1 className="mt-20 text-center text-5xl font-bold">
+        Loading...............
+      </h1>
+    );
   }
-const handleDelete = async id =>{
-  try {
-    const proceed = confirm("Are You sure you want to delete!");
-    if (proceed) {
-      const { data } = await axios.delete(
-        `http://localhost:5000/bookings/${id}`
-      );
-      if (data.deletedCount > 0) {
-        toast.success("Successful booking delete!");
-        const remaining = bookings.filter((booking) => booking._id !== id);
-        setBookings(remaining);
+  const handleDelete = async (id) => {
+    try {
+      const proceed = confirm("Are You sure you want to delete!");
+      const url = `/bookings/${id}`;
+      if (proceed) {
+        const { data } = await axiosSecure.delete(url);
+        if (data.deletedCount > 0) {
+          toast.success("Successful booking delete!");
+          const remaining = bookings.filter((booking) => booking._id !== id);
+          setBookings(remaining);
+        }
       }
+    } catch (error) {
+      toast.error(error.message);
     }
-  } catch (error) {
-    toast.error(error.message)
-  }
-}
+  };
 
-const handleBookingConfirm = async id =>{
-  try {
-    const { data } = await axios.patch(`http://localhost:5000/bookings/${id}`, {
-      status: "confirm"
-    });
-    if (data.modifiedCount > 0) {
-      toast.success("Booking update successfully.")
-      const remaining = bookings.filter((booking) => booking._id !== id);
-      const update = bookings.find((booking) => booking._id === id);
-      update.status = "confirm";
-      setBookings([update, ...remaining]);
+  const handleBookingConfirm = async (id) => {
+    try {
+       const url = `/bookings/${id}`;
+      const { data } = await axiosSecure.patch(
+        url,
+        {
+          status: "confirm",
+        }
+      );
+      if (data.modifiedCount > 0) {
+        toast.success("Booking update successfully.");
+        const remaining = bookings.filter((booking) => booking._id !== id);
+        const update = bookings.find((booking) => booking._id === id);
+        update.status = "confirm";
+        setBookings([update, ...remaining]);
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
-  } catch (error) {
-toast.error(error.message)
-  }
-}
+  };
 
-  // const handleBookingConfirm = (id) => {
-  //   fetch(`http://localhost:5000/bookings/${id}`, {
-  //     method: "PATCH",
-  //     headers: {
-  //       "content-type": "application/json",
-  //     },
-  //     body: JSON.stringify({ status: "confirm" }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log(data);
-  //       if (data.modifiedCount > 0) {
-  //         //update state
-  //         const remaining = bookings.filter((booking) => booking._id !== id);
-  //         const update = bookings.find((booking) => booking._id === id);
-  //         update.status = "confirm";
-  //         setBookings([update, ...remaining]);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // };
+
 
   return (
     <div>

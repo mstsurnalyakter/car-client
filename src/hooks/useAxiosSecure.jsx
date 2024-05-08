@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000",
-  withCredentials:true
+  baseURL: "https://car-server-gamma.vercel.app",
+  withCredentials: true,
 });
 const useAxiosSecure = () => {
     const {logout} = useContextData();

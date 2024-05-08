@@ -1,14 +1,15 @@
 import {useQuery} from "@tanstack/react-query";
-import axios from "axios";
 import useContextData from "./useContextData";
+import useAxiosSecure from "./useAxiosSecure";
 
 const useBooking = () => {
     const {user} = useContextData()
-      const url = `http://localhost:5000/bookings?email=${user?.email}`;
+     const axiosSecure = useAxiosSecure();
+      const url = `/bookings?email=${user?.email}`;
     const {data,isLoading,refetch} = useQuery({
         queryKey:["bookings"],
         queryFn:async () =>{
-            const {data} = await axios(url);
+            const {data} = await axiosSecure.get(url);
             return data;
         }
     })
